@@ -61,14 +61,15 @@ DOWN = {"dx": 0, "dy": -1}
 // == SNAKE
 
 Snake = {}
+
 Snake.init = function
 	x = fieldWidth / 2
 	y = fieldHeight / 2
 	self.parts = [
-	{"x": x-2, "y": y}, 
+	{"x": x, "y": y}, 
 	{"x": x-1, "y": y}, 
-	{"x": x, "y": y}]
-	self.direction = LEFT
+	{"x": x-2, "y": y}]
+	self.direction = RIGHT
 	self.alive = true
 end function
 
@@ -87,7 +88,7 @@ Snake.update = function
 	// Compute new head
 	newHead = {
 	"x": (head.x + self.direction.dx + fieldWidth) % fieldWidth, 
-	"y": (head.y + self.direction.dy + fieldHeight) % fieldHeight}	
+	"y": (head.y + self.direction.dy + fieldHeight) % fieldHeight}  
 	// Detect if new head is hitting the apple
 	if newHead.x == Apple.x and newHead.y == Apple.y then
 		// Add new head
@@ -102,9 +103,9 @@ Snake.update = function
 			self.alive = false
 		else
 			// Add new head
-			self.parts.insert(0,newHead)	
-		end if
-	end if
+			self.parts.insert(0,newHead)
+		end if	
+	end if	
 end function
 
 Snake.occupies = function(x,y)
@@ -125,12 +126,19 @@ end function
 // == APPLE
 
 Apple = {}
+
 Apple.init = function
 	self.moveToRandomPosition
 end function
+
+Apple.draw = function
+	drawFieldPixel self.x,self.y,color.red
+end function
+
 Apple.beEaten = function
 	self.moveToRandomPosition
 end function
+
 Apple.moveToRandomPosition = function
 	while true
 		self.x = floor(rnd * fieldWidth)
@@ -138,11 +146,8 @@ Apple.moveToRandomPosition = function
 		if not Snake.occupies(self.x, self.y) then return
 	end while
 end function
-Apple.draw = function
-	drawFieldPixel self.x,self.y,color.red
-end function
 
-// == IMPLEMENTATION
+// == SETUP
 
 setupDisplay = function
 	clear
@@ -157,7 +162,7 @@ end function
 // == DRAWING
 
 drawFrame = function
-	drawBackground
+	drawField
 	Snake.draw
 	Apple.draw
 end function
@@ -167,7 +172,7 @@ drawField = function
 end function
 
 drawFieldPixel = function(fieldX,fieldY,pixelColor)
-	gfx.setPixel fieldBottomLeftX+fieldX,fieldBottomLeftY+fieldY,pixelColor	
+	gfx.setPixel fieldBottomLeftX+fieldX,fieldBottomLeftY+fieldY,pixelColor 
 end function
 
 // == UI
